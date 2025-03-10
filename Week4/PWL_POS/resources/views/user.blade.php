@@ -21,7 +21,7 @@
             <td>{{ $data->username }}</td>    
             <td>{{ $data->nama }}</td>
             <td>{{ $data->level_id }}</td>
-        </tr>            
+        </tr>               
         @endforeach
     </table>
 </body>
