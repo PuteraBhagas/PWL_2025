@@ -40,9 +40,11 @@ public function update(Request $request, $id)
         'kategori_kode' => $request->kodeKategori,
         'kategori_nama' => $request->namaKategori,
     ]);
-    return redirect('/kategori');
 }
 
-
-
+public function delete($id)
+{
+    KategoriModel::where('kategori_id', $id)->delete();
+    return redirect('/kategori');
+}
 }
