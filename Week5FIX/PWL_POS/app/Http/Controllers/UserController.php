@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\UserModel;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use App\Models\UserModel;
 use App\Models\LevelModel;
 use Yajra\DataTables\Facades\DataTables;
+
 
 class UserController extends Controller
 {
@@ -22,18 +22,23 @@ class UserController extends Controller
             'title' => 'Daftar user yang terdaftar dalam sistem'
         ];
 
-        
-
         $activeMenu = 'user'; // set menu yang sedang aktif
 
-        return view('user.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
-    }
+        $level = LevelModel::all();
 
+        return view('user.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'level' => $level, 'activeMenu' => $activeMenu]);
+    }
+    
     // Ambil data user dalam bentuk json untuk datatables public function list(Request $request)
     public function list (Request $request)
     {
         $users = UserModel::select('user_id', 'username', 'nama', 'level_id')
                 ->with('level');
+        
+        // Filter data user berdasarkan level_id
+        if ($request->level_id) {
+            $users->where('level_id', $request->level_id);
+        }
 
         return DataTables::of($users)
             // menambahkan kolom index / no urut (default nama kolom: DT_RowIndex)
@@ -123,8 +128,7 @@ class UserController extends Controller
             'title' => 'Edit user'
         ];
 
-
-        $activeMenu = 'user'; // set menu yang sedang aktif
+         $activeMenu = 'user'; // set menu yang sedang aktif
 
         return view('user.edit', ['breadcrumb' => $breadcrumb, 'page' => $page, 'user' => $user, 'level' => $level, 'activeMenu' => $activeMenu]);
     }
@@ -213,6 +217,50 @@ class UserController extends Controller
     //     return redirect('/user');
     // }
 }
+
+
+    // public function tambah(){
+    //     return view('user_tambah');
+    // }
+
+    // public function tambah_simpan(Request $request) {
+
+    //     UserModel::create([
+    //         'username' => $request->username,
+    //         'nama' => $request->nama,
+    //         'password' => Hash::make($request->password),
+    //         'level_id' => $request->level_id
+    //     ]);
+
+    //     return redirect('/user');
+    // }
+
+    // public function ubah($id) {
+    //     $user = UserModel::find($id);
+    //     return view('user_ubah', ['data' => $user]);
+    // }
+
+    // public function ubah_simpan($id, Request $request) {
+
+    //     $user = UserModel::find($id);
+
+    //     $user->username = $request->username;
+    //     $user->nama = $request->nama;
+    //     $user->password = Hash::make('$request->password');
+    //     $user->level_id = $request->level_id;
+
+    //     $user->save();
+
+    //     return redirect('/user');
+    // }
+
+    // public function hapus($id) {
+    //     $user = UserModel::find($id);
+    //     $user->delete();
+
+    //     return redirect('/user');
+    // }
+
   // public function index() 
   // {
     //   $data = [
