@@ -24,7 +24,7 @@
                             <select class="form-control" id="level_id" name="level_id" required>
                                 <option value="">- Semua -</option>
                                 @foreach($level as $item)
-                                    <option value="{{ $item->level_id }}">{{ $item->level_name }}</option>
+                                    <option value="{{ $item->level_id }}">{{ $item->level_nama }}</option>
                                 @endforeach
                             </select>
                             <small class="form-text text-muted">Level Pengguna</small>
@@ -67,7 +67,7 @@
                 columns: [
                     { data: "DT_RowIndex", className: "text-center", orderable: false, searchable: false },
                     { data: "level_kode", className: "", orderable: true, searchable: true },
-                    { data: "level_name", className: "", orderable: true, searchable: true },
+                    { data: "level_nama", className: "", orderable: true, searchable: true },
                     { data: "aksi", className: "text-center", orderable: false, searchable: false }
                 ]
             });

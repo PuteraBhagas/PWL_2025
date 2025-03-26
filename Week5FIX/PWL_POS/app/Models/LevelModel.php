@@ -11,7 +11,7 @@ class LevelModel extends Model
 {
       protected $table = 'm_level'; // Nama tabel sesuai database
     protected $primaryKey = 'level_id'; // Pastikan primary key sesuai dengan database
-    protected $fillable = ['level_kode', 'level_name']; // Tambahkan level_kode agar bisa diakses
+    protected $fillable = ['level_kode', 'level_nama']; // Tambahkan level_kode agar bisa diakses
     public $timestamps = false; // Nonaktifkan timestamps karena tidak digunakan
  
     public function users(): HasMany
