@@ -2,168 +2,131 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\SupplierModel;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class SupplierController extends Controller
 {
-    // Menampilkan halaman daftar supplier
-    public function index()
-    {
-        $breadcrumb = (object) [
+    public function index(){
+        $breadcrumb = (object)[
             'title' => 'Daftar Supplier',
             'list' => ['Home', 'Supplier']
         ];
 
-        $page = (object) [
-            'title' => 'Daftar Supplier yang tersedia dalam sistem'
+        $page = (object)[
+            'title' => 'Daftar Supplier yang terdaftar dalam sistem'
         ];
 
-        $activeMenu = 'supplier'; // Set menu yang sedang aktif
-        
-        $supplier = SupplierModel::all(); 
-        return view('supplier.index', compact('breadcrumb', 'supplier', 'page', 'activeMenu'));
+        $activeMenu = 'supplier'; // set menu yang sedang aktif
 
+        return view('supplier.index', ['breadcrumb' => $breadcrumb, 'page' => $page,'activeMenu' => $activeMenu]);
     }
 
-    public function getSuppliers(Request $request)
-    {
-        $query = SupplierModel::query();
-
-        if ($request->supplier_id) {
-            $query->where('supplier_id', $request->supplier_id);
-        }
-
-        $data = $query->select('supplier_id', 'supplier_nama', 'supplier_telepon', 'supplier_alamat');
-
-        return DataTables::of($data)
-            ->addIndexColumn()
-            ->addColumn('aksi', function ($supplier) {
-                return '
-                    <a href="' . route('supplier.show', $supplier->supplier_id) . '" class="btn btn-info btn-sm">Detail</a>
-                    <a href="' . route('supplier.edit', $supplier->supplier_id) . '" class="btn btn-warning btn-sm">Edit</a>
-                    <form method="POST" action="' . route('supplier.destroy', $supplier->supplier_id) . '" class="d-inline-block">
-                        ' . csrf_field() . method_field('DELETE') . '
-                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Yakin ingin menghapus?\');">Hapus</button>
-                    </form>
-                ';
+    public function list(Request $request){
+        $suppliers = SupplierModel::select('supplier_id', 'supplier_kode', 'supplier_nama');
+    
+        return DataTables::of($suppliers)
+            ->addIndexColumn() // menambahkan kolom index / no urut (default nama kolom: DT_RowIndex)
+            ->addColumn('aksi', function ($supplier) { // menambahkan kolom aksi
+                $btn = '<a href="'.url('/supplier/' . $supplier->supplier_id).'" class="btn btn-info btn-sm">Detail</a> ';
+                $btn .= '<a href="'.url('/supplier/' . $supplier->supplier_id . '/edit').'" class="btn btn-warning btn-sm">Edit</a> ';
+                $btn .= '<form class="d-inline-block" method="POST" action="'.url('/supplier/' . $supplier->supplier_id).'">';
+                $btn .= csrf_field() . method_field("DELETE");
+                $btn .= '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Apakah Anda yakin menghapus data ini?\')">Hapus</button>';
+                $btn .= '</form>';
+                return $btn;
             })
-            ->rawColumns(['aksi'])
+            ->rawColumns(['aksi']) // memberitahu bahwa kolom aksi adalah HTML
             ->make(true);
     }
 
-
-    // Menampilkan halaman tambah supplier
-    public function create()
-    {
-        $breadcrumb = (object) [
+    public function create(){
+        $breadcrumb = (object)[
             'title' => 'Tambah Supplier',
             'list' => ['Home', 'Supplier', 'Tambah']
         ];
 
-        $page = (object) [
-            'title' => 'Tambah Supplier Baru'
+        $page = (object)[
+            'title' => 'Tambah supplier baru'
         ];
 
-        $activeMenu = 'supplier';
+        $activeMenu = 'Supplier';
 
-        return view('supplier.create', compact('breadcrumb', 'page', 'activeMenu'));
+        return view('supplier.create', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
     }
 
-    // Menyimpan data supplier baru
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         $request->validate([
-            'supplier_kode' => 'required|string|unique:m_supplier,supplier_kode|max:50',
-            'supplier_nama' => 'required|string|max:100',
-            'supplier_alamat' => 'nullable|string',
-            'supplier_telepon' => 'nullable|string|max:20',
+            'supplier_kode' => 'required|string|unique:m_supplier,supplier_kode',
+            'supplier_nama' => 'required|min:5',
         ]);
 
         SupplierModel::create([
             'supplier_kode' => $request->supplier_kode,
-            'supplier_nama' => $request->supplier_nama,
-            'supplier_alamat' => $request->supplier_alamat,
-            'supplier_telepon' => $request->supplier_telepon,
+             'supplier_nama' => $request->supplier_nama,
         ]);
 
-        return redirect('/supplier')->with('success', 'Data Supplier berhasil ditambahkan');
+        return redirect('/supplier')->with('Success', 'Data berhasil disimpan');
     }
-
-    // Menampilkan halaman edit supplier
-    public function edit($id)
-    {
-        $supplier = SupplierModel::findOrFail($id);
-
-        $breadcrumb = (object) [
-            'title' => 'Edit Supplier',
-            'list' => ['Home', 'Supplier', 'Edit']
-        ];
-
-        $page = (object) [
-            'title' => 'Edit Data Supplier'
-        ];
-
-        $activeMenu = 'supplier';
-
-        return view('supplier.edit', compact('breadcrumb', 'page', 'supplier', 'activeMenu'));
-    }
-
-    // Menyimpan perubahan data supplier
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'supplier_kode' => 'required|string|max:50|unique:m_supplier,supplier_kode,' . $id . ',supplier_id',
-            'supplier_nama' => 'required|string|max:100',
-            'supplier_alamat' => 'nullable|string',
-            'supplier_telepon' => 'nullable|string|max:20',
-        ]);
-
-        $supplier = SupplierModel::findOrFail($id);
-        $supplier->update([
-            'supplier_kode' => $request->supplier_kode,
-            'supplier_nama' => $request->supplier_nama,
-            'supplier_alamat' => $request->supplier_alamat,
-            'supplier_telepon' => $request->supplier_telepon,
-        ]);
-
-        return redirect('/supplier')->with('success', 'Data Supplier berhasil diperbarui');
-    }
-
-    // Menghapus data supplier
-    public function destroy($id)
-    {
+    public function show(string $id){
         $supplier = SupplierModel::find($id);
 
-        if (!$supplier) {
-            return redirect('/supplier')->with('error', 'Data Supplier tidak ditemukan');
-        }
-
-        try {
-            $supplier->delete();
-            return redirect('/supplier')->with('success', 'Data Supplier berhasil dihapus');
-        } catch (\Illuminate\Database\QueryException $e) {
-            return redirect('/supplier')->with('error', 'Data Supplier gagal dihapus karena masih terkait dengan data lain');
-        }
-    }
-
-    // Menampilkan detail supplier
-    public function show($id)
-    {
-        $supplier = SupplierModel::findOrFail($id);
-
-        $breadcrumb = (object) [
+        $breadcrumb = (object)[
             'title' => 'Detail Supplier',
             'list' => ['Home', 'Supplier', 'Detail']
         ];
 
-        $page = (object) [
+        $page = (object)[
             'title' => 'Detail Supplier'
         ];
 
         $activeMenu = 'supplier';
 
-        return view('supplier.show', compact('breadcrumb', 'page', 'supplier', 'activeMenu'));
+        return view('supplier.show',['supplier' => $supplier, 'breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
+    }
+    public function edit(string $id){
+        $supplier = SupplierModel::find($id);
+
+        $breadcrumb = (object)[
+            'title' => 'Edit Supplier',
+            'list' => ['Home', 'Supplier', 'Edit'],
+        ];
+
+        $page = (object)[
+            'title' => 'Edit Supplier'
+        ];
+
+        $activeMenu = 'supplier';
+
+        return view('supplier.edit', ['breadcrumb' => $breadcrumb, 'page' => $page, 'supplier' => $supplier, 'activeMenu' => $activeMenu]);
+    }
+    public function update(Request $request, string $id){
+        $request->validate([
+            'supplier_kode' => 'required|string|unique:m_supplier,supplier_kode',
+            'supplier_nama' => 'required|min:5',
+        ]);
+
+        SupplierModel::find($id)->update([
+            'supplier_kode' => $request->supplier_kode,
+             'supplier_nama' => $request->supplier_nama,
+        ]);
+
+        return redirect('/supplier')->with('Success', 'Data berhasil disimpan');
+    }
+    public function destroy(string $id){
+        $check = SupplierModel::find($id);
+
+        if (!$check) { // cek data ada atau tidak
+            return redirect('/supplier')->with('error','data tidak ditemukan');
+        }
+
+        try{
+            SupplierModel::destroy($id);// hapus data levelS
+            return redirect('/supplier')->with('success','Data supplier berhasil dihapus');
+        } catch (\Illuminate\Database\QueryException $e){
+            return redirect('/supplier')->with('error', 'Data supplier gagal dihapus karena terdapat tabel lain yang masih terkait dengan data ini');
+        }
     }
 }

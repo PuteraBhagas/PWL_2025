@@ -45,16 +45,16 @@ Route::group(['prefix' => 'user'], function () {
         Route::delete('/{id}', [KategoriController::class, 'destroy'])->name('kategori.destroy'); // Hapus kategori
     });
 
-    Route::group(['prefix' => 'supplier'], function () {
-    Route::get('/', [SupplierController::class, 'index'])->name('supplier.index'); // Menampilkan daftar supplier
-    Route::post('supplier/list', [SupplierController::class, 'getSuppliers'])->name('supplier.list'); // Data JSON untuk DataTables
-    Route::get('/create', [SupplierController::class, 'create'])->name('supplier.create'); // Form tambah supplier
-    Route::post('/', [SupplierController::class, 'store'])->name('supplier.store'); // Simpan supplier baru
-    Route::get('/{id}', [SupplierController::class, 'show'])->name('supplier.show'); // Detail supplier
-    Route::get('/{id}/edit', [SupplierController::class, 'edit'])->name('supplier.edit'); // Form edit supplier
-    Route::put('/{id}', [SupplierController::class, 'update'])->name('supplier.update'); // Simpan perubahan supplier
-    Route::delete('/{id}', [SupplierController::class, 'destroy'])->name('supplier.destroy'); // Hapus supplier
-});
+    Route::group(['prefix'=>'supplier'], function(){
+        Route::get('/',[SupplierController::class,'index']);//menampilkan halaman awal
+        Route::post('/list',[SupplierController::class,'list']);//menampilkan data user bentuk json / datatables
+        Route::get('/create',[SupplierController::class,'create']);// meanmpilkan bentuk form untuk tambah user
+        Route::post('/',[SupplierController::class,'store']);//menyimpan user data baru 
+        Route::get('/{id}',[SupplierController::class,'show']); // menampilkan detil user
+        Route::get('/{id}/edit',[SupplierController::class,'edit']);// menampilkan halaman form edit user
+        Route::put('/{id}',[SupplierController::class,'update']);// menyimpan perubahan data user 
+        Route::delete('/{id}',[SupplierController::class,'destroy']);// menghapus data user 
+    });
 
 Route::group(['prefix' => 'barang'], function () {
     Route::get('/', [BarangController::class, 'index'])->name('barang.index');

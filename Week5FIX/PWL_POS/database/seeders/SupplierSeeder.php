@@ -18,7 +18,7 @@ class SupplierSeeder extends Seeder
                 'supplier_kode' => 'SUP001',
                 'supplier_nama' => 'PT Maju Jaya',
                 'supplier_alamat' => 'Jl. Merdeka No. 45, Jakarta',
-                'supplier_telepon' => '081234567890',
+                'supplier_telepon' => '081234567890',   
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

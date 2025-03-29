@@ -1,56 +1,60 @@
-{{-- Halaman Edit Supplier --}}
 @extends('layouts.template')
 
 @section('content')
-<div class="container">
-    <h1>Edit Supplier</h1>
-
-    @isset($supplier)
-        <form method="POST" action="{{ route('supplier.update', $supplier->supplier_id) }}" class="form-horizontal">
-            @csrf
-            @method('PUT')
-            
-            <div class="form-group row">
-                <label class="col-2 control-label col-form-label">Nama Supplier</label>
-                <div class="col-10">
-                    <input type="text" class="form-control" id="supplier_nama" name="supplier_nama" value="{{ old('supplier_nama', $supplier->supplier_nama) }}" required>
-                    @error('supplier_nama')
-                        <small class="form-text text-danger">{{ $message }}</small>
-                    @enderror
+    <div class="card card-outline card-primary">
+        <div class="card-header">
+            <h3 class="card-title">{{ $page->title }}</h3>
+            <div class="card-tools"></div>
+        </div>
+        <div class="card-body">
+            @empty($supplier)
+                <div class="alert alert-danger alert-dismissible">
+                    <h5><i class="icon fas fa-ban"></i> Kesalahan!</h5>
+                    Data yang Anda cari tidak ditemukan.
                 </div>
-            </div>
+                <a href="{{ url('supplier') }}" class="btn btn-sm btn-default mt-2">Kembali</a>
+            @else
+                <form method="POST" action="{{ url('/supplier/'.$supplier->supplier_id) }}" class="form-horizontal">
+                    @csrf
+                    {!! method_field('PUT') !!} <!-- Tambahkan baris ini untuk proses edit yang butuh method PUT -->
 
-            <div class="form-group row">
-                <label class="col-2 control-label col-form-label">Kontak</label>
-                <div class="col-10">
-                    <input type="text" class="form-control" id="supplier_telepon" name="supplier_telepon" value="{{ old('supplier_telepon', $supplier->supplier_telepon) }}" required>
-                    @error('supplier_telepon')
-                        <small class="form-text text-danger">{{ $message }}</small>
-                    @enderror
-                </div>
-            </div>
+                    <div class="form-group row">
+                        <label class="col-1 control-label col-form-label">SupplierKode</label>
+                        <div class="col-11">
+                            <input type="text" class="form-control" id="supplier_kode" name="supplier_kode"
+                                value="{{ old('supplier_kode', $supplier->supplier_kode) }}" required>
+                            @error('supplier_kode')
+                                <small class="form-text text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+                    </div>
 
-            <div class="form-group row">
-                <label class="col-2 control-label col-form-label">Alamat</label>
-                <div class="col-10">
-                    <textarea class="form-control" id="supplier_alamat" name="supplier_alamat" required>{{ old('supplier_alamat', $supplier->supplier_alamat) }}</textarea>
-                    @error('supplier_alamat')
-                        <small class="form-text text-danger">{{ $message }}</small>
-                    @enderror
-                </div>
-            </div>
+                    <div class="form-group row">
+                        <label class="col-1 control-label col-form-label">SupplierNama</label>
+                        <div class="col-11">
+                            <input type="text" class="form-control" id="supplier_nama" name="supplier_nama"
+                                value="{{ old('supplier_nama', $supplier->supplier_nama) }}" required>
+                            @error('supplier_nama')
+                                <small class="form-text text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+                    </div>
 
-            <div class="form-group row">
-                <label class="col-2 control-label col-form-label"></label>
-                <div class="col-10">
-                    <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
-                    <a class="btn btn-sm btn-default ml-1" href="{{ route('supplier.index') }}">Kembali</a>
-                </div>
-            </div>
-        </form>
-    @else
-        <div class="alert alert-danger">Data Supplier tidak ditemukan.</div>
-        <a href="{{ route('supplier.index') }}" class="btn btn-secondary">Kembali</a>
-    @endisset
-</div>
+                    <div class="form-group row">
+                        <label class="col-1 control-label col-form-label"></label>
+                        <div class="col-11">
+                            <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+                            <a class="btn btn-sm btn-default ml-1" href="{{ url('supplier') }}">Kembali</a>
+                        </div>
+                    </div>
+                </form>
+            @endempty
+        </div>
+    </div>
 @endsection
+
+@push('css')
+@endpush
+
+@push('js')
+@endpush
