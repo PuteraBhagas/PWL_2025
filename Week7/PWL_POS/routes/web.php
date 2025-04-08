@@ -8,6 +8,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 use Symfony\Component\Routing\Router;
+use App\Http\Controllers\AuthController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -34,7 +37,12 @@ use Symfony\Component\Routing\Router;
 // Route::get('/user/ubah/{id}',[UserController::class,'ubah']);
 // Route::put('/user/ubah_simpan/{id}',[UserController::class,'ubah_simpan']);
 // Route::get('/user/hapus/{id}',[UserController::class,'hapus']);
+Route::pattern('id', '[0-9]+');
+Route::get('login',[AuthController::class, 'login'])->name('login');
+Route::post('login',[AuthController::class, 'postlogin']);
+Route::get('logout',[AuthController::class, 'logout'])->middleware('auth');
 
+Route::middleware(['auth'])->group(function(){
 //Js 5 
 //Praktikum 2
 Route::get('/',[WelcomeController::class,'index']);
@@ -123,4 +131,4 @@ Route::group(['prefix'=>'supplier'], function(){
     Route::delete('/{id}/delete_ajax',[SupplierController::class,'delete_ajax']);// menghapus data user 
     Route::delete('/{id}',[SupplierController::class,'destroy']);// menghapus data user 
 });
- 
+});
