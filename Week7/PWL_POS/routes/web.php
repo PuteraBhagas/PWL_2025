@@ -47,6 +47,8 @@ Route::middleware(['auth'])->group(function(){
 //Praktikum 2
 Route::get('/',[WelcomeController::class,'index']);
 //Praktikum 3
+
+Route::middleware(['authorize:ADM'])->group(function() {
 Route::group(['prefix'=>'user'], function(){
     Route::get('/',[UserController::class,'index']);//menampilkan halaman awal
     Route::post('/list',[UserController::class,'list']);//menampilkan data user bentuk json / datatables
@@ -130,5 +132,6 @@ Route::group(['prefix'=>'supplier'], function(){
     Route::get('/{id}/delete_ajax',[SupplierController::class,'confirm_ajax']);// menghapus data user 
     Route::delete('/{id}/delete_ajax',[SupplierController::class,'delete_ajax']);// menghapus data user 
     Route::delete('/{id}',[SupplierController::class,'destroy']);// menghapus data user 
+});
 });
 });
