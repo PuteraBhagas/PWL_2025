@@ -66,7 +66,7 @@ Route::group(['prefix'=>'user'], function(){
     Route::delete('/{id}',[UserController::class,'destroy']);// menghapus data user 
 });
 
-Route::group(['prefix'=>'level'], function(){
+Route::middleware(['authorize:ADM'])->prefix('level')->group(function () {
     Route::get('/',[LevelController::class,'index']);//menampilkan halaman awal
     Route::post('/list',[LevelController::class,'list']);//menampilkan data user bentuk json / datatables
     Route::get('/create',[LevelController::class,'create']);// meanmpilkan bentuk form untuk tambah user
@@ -83,7 +83,7 @@ Route::group(['prefix'=>'level'], function(){
     Route::delete('/{id}',[LevelController::class,'destroy']);// menghapus data user 
 });
 
-Route::group(['prefix'=>'kategori'], function(){
+Route::middleware(['authorize:ADM,MNG'])->prefix('kategori')->group(function () {
     Route::get('/',[KategoriController::class,'index']);//menampilkan halaman awal
     Route::post('/list',[KategoriController::class,'list']);//menampilkan data user bentuk json / datatables
     Route::get('/create',[KategoriController::class,'create']);// meanmpilkan bentuk form untuk tambah user
@@ -100,7 +100,7 @@ Route::group(['prefix'=>'kategori'], function(){
     Route::delete('/{id}',[KategoriController::class,'destroy']);// menghapus data user 
 });
 
-Route::group(['prefix'=>'barang'], function(){
+Route::middleware(['authorize:ADM,MNG'])->prefix('barang')->group(function () {
     Route::get('/',[BarangController::class,'index']);//menampilkan halaman awal
     Route::post('/list',[BarangController::class,'list']);//menampilkan data user bentuk json / datatables
     Route::get('/create',[BarangController::class,'create']);// meanmpilkan bentuk form untuk tambah user
@@ -117,7 +117,7 @@ Route::group(['prefix'=>'barang'], function(){
     Route::delete('/{id}',[BarangController::class,'destroy']);// menghapus data user 
 });
 
-Route::group(['prefix'=>'supplier'], function(){
+Route::middleware(['authorize:MNG'])->prefix('supplier')->group(function () {
     Route::get('/',[SupplierController::class,'index']);//menampilkan halaman awal
     Route::post('/list',[SupplierController::class,'list']);//menampilkan data user bentuk json / datatables
     Route::get('/create',[SupplierController::class,'create']);// meanmpilkan bentuk form untuk tambah user
