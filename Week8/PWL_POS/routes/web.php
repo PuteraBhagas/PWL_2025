@@ -65,7 +65,9 @@ Route::group(['prefix'=>'user'], function(){
     Route::put('/{id}/update_ajax',[UserController::class,'update_ajax']);// menyimpan perubahan data user ajax js 6
     Route::get('/{id}/delete_ajax',[UserController::class, 'confirm_ajax']); // untuk tampilan form confirm delete ajax js 6
     Route::delete('/{id}/delete_ajax',[UserController::class, 'delete_ajax']); // untuk hapus data ajax js 6
-    Route::delete('/{id}',[UserController::class,'destroy']);// menghapus data user 
+    Route::delete('/{id}',[UserController::class,'destroy']);// menghapus data user
+    Route::get('/import',[UserController::class,'import']); // ajax form upload excel
+    Route::post('/import_ajax',[UserController::class,'import_ajax']); // ajax form import excel  
 });
 
 Route::middleware(['authorize:ADM'])->prefix('level')->group(function () {
@@ -83,6 +85,8 @@ Route::middleware(['authorize:ADM'])->prefix('level')->group(function () {
     Route::get('/{id}/delete_ajax',[LevelController::class,'confirm_ajax']);// menghapus data user ajax js 6
     Route::delete('/{id}/delete_ajax',[LevelController::class,'delete_ajax']);// menghapus data user ajax js 6
     Route::delete('/{id}',[LevelController::class,'destroy']);// menghapus data user 
+    Route::get('/import',[LevelController::class,'import']); // ajax form upload excel
+    Route::post('/import_ajax',[LevelController::class,'import_ajax']); // ajax form import excel
 });
 
 Route::middleware(['authorize:ADM,MNG'])->prefix('kategori')->group(function () {
@@ -100,6 +104,8 @@ Route::middleware(['authorize:ADM,MNG'])->prefix('kategori')->group(function () 
     Route::get('/{id}/delete_ajax',[KategoriController::class,'confirm_ajax']);// menghapus data user ajax js 6 
     Route::delete('/{id}/delete_ajax',[KategoriController::class,'delete_ajax']);// menghapus data user ajax js 6 
     Route::delete('/{id}',[KategoriController::class,'destroy']);// menghapus data user 
+    Route::get('/import',[KategoriController::class,'import']); // ajax form upload excel
+    Route::post('/import_ajax',[KategoriController::class,'import_ajax']); // ajax form import excel 
 });
 
 Route::middleware(['authorize:ADM,MNG'])->prefix('barang')->group(function () {
@@ -121,7 +127,7 @@ Route::middleware(['authorize:ADM,MNG'])->prefix('barang')->group(function () {
     Route::post('/import_ajax',[BarangController::class,'import_ajax']); // ajax form import excel
 });
 
-Route::middleware(['authorize:MNG'])->prefix('supplier')->group(function () {
+Route::middleware(['authorize:MNG,ADM'])->prefix('supplier')->group(function () {
     Route::get('/',[SupplierController::class,'index']);//menampilkan halaman awal
     Route::post('/list',[SupplierController::class,'list']);//menampilkan data user bentuk json / datatables
     Route::get('/create',[SupplierController::class,'create']);// meanmpilkan bentuk form untuk tambah user
@@ -136,6 +142,8 @@ Route::middleware(['authorize:MNG'])->prefix('supplier')->group(function () {
     Route::get('/{id}/delete_ajax',[SupplierController::class,'confirm_ajax']);// menghapus data user 
     Route::delete('/{id}/delete_ajax',[SupplierController::class,'delete_ajax']);// menghapus data user 
     Route::delete('/{id}',[SupplierController::class,'destroy']);// menghapus data user 
+    Route::get('/import',[SupplierController::class,'import']); // ajax form upload excel
+    Route::post('/import_ajax',[SupplierController::class,'import_ajax']); // ajax form import excel 
 });
 });
 });
