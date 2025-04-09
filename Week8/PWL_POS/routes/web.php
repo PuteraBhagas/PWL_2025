@@ -117,6 +117,8 @@ Route::middleware(['authorize:ADM,MNG'])->prefix('barang')->group(function () {
     Route::get('/{id}/delete_ajax',[BarangController::class,'confirm_ajax']);// menghapus data user ajax js 6 
     Route::delete('/{id}/delete_ajax',[BarangController::class,'delete_ajax']);// menghapus data user ajax js 6 
     Route::delete('/{id}',[BarangController::class,'destroy']);// menghapus data user 
+    Route::get('/import',[BarangController::class,'import']); // ajax form upload excel
+    Route::post('/import_ajax',[BarangController::class,'import_ajax']); // ajax form import excel
 });
 
 Route::middleware(['authorize:MNG'])->prefix('supplier')->group(function () {
