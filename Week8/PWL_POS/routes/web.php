@@ -129,6 +129,7 @@ Route::middleware(['authorize:ADM,MNG'])->prefix('barang')->group(function () {
     Route::get('/import',[BarangController::class,'import']); // ajax form upload excel
     Route::post('/import_ajax',[BarangController::class,'import_ajax']); // ajax form import excel
     Route::get('/export_excel',[BarangController::class,'export_excel']); // export excel
+    Route::get('/export_pdf',[BarangController::class, 'export_pdf']);// export pdf
 });
 
 Route::middleware(['authorize:MNG,ADM'])->prefix('supplier')->group(function () {
