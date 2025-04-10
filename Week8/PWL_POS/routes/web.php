@@ -48,6 +48,9 @@ Route::middleware(['auth'])->group(function(){
 //Js 5 
 //Praktikum 2
 Route::get('/',[WelcomeController::class,'index']);
+Route::post('/update-photo', [UserController::class, 'update_photo']);          // upload foto
+Route::post('/delete-photo', [UserController::class, 'delete_photo']);
+
 //Praktikum 3
 
 Route::middleware(['authorize:ADM'])->group(function() {

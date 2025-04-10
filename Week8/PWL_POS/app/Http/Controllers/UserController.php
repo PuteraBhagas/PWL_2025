@@ -13,6 +13,7 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
 
 use function Laravel\Prompts\error;
 
@@ -413,6 +414,73 @@ class UserController extends Controller
         $pdf->render();
 
         return $pdf->stream('Data User'.date('Y-m-d H:i:s').'.pdf');
+    }
+
+    public function update_photo(Request $request)
+     {
+         // Validasi file
+         $request->validate([
+             'photo_profile' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+         ]);
+ 
+         try {
+             $user = auth()->user();
+ 
+             if (!$user) {
+                 return redirect('/login')->with('error', 'Silahkan login terlebih dahulu');
+             }
+ 
+             $userId = $user->user_id;
+ 
+             $userModel = UserModel::find($userId);
+ 
+             if (!$userModel) {
+                 return redirect('/login')->with('error', 'User tidak ditemukan');
+             }
+ 
+             // Menghapus foto jika sudah ada
+             if ($userModel->photo_profile && file_exists(storage_path('app/public/' . $userModel->photo_profile))) {
+                 Storage::disk('public')->delete($userModel->photo_profile);
+             }
+ 
+             $fileName = 'profile_' . $userId . '_' . time() . '.' . $request->photo_profile->extension();
+             $path = $request->photo_profile->storeAs('profiles', $fileName, 'public');
+ 
+             UserModel::where('user_id', $userId)->update([
+                 'photo_profile' => $path
+             ]);
+ 
+             return redirect()->back()->with('success', 'Foto profile berhasil diperbarui');
+         } catch (\Exception $e) {
+             return redirect()->back()->with('error', 'Gagal mengupload foto: ' . $e->getMessage());
+         }
+     }
+
+     public function delete_photo()
+    {
+        try {
+            $user = auth()->user();
+
+            if (!$user) {
+                return redirect('/login')->with('error', 'Silahkan login terlebih dahulu');
+            }
+
+            $userModel = UserModel::find($user->user_id);
+
+            if (!$userModel || !$userModel->photo_profile) {
+                return redirect()->back()->with('error', 'Tidak ada foto yang dapat dihapus');
+            }
+
+            if (Storage::disk('public')->exists($userModel->photo_profile)) {
+                Storage::disk('public')->delete($userModel->photo_profile);
+            }
+
+            $userModel->update(['photo_profile' => null]);
+
+            return redirect()->back()->with('success', 'Foto profil berhasil dihapus');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal menghapus foto: ' . $e->getMessage());
+        }
     }
    
     // public function index(){
