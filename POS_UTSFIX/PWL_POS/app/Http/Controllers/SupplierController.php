@@ -7,6 +7,8 @@ use App\Models\SupplierModel;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SupplierController extends Controller
 {
@@ -234,4 +236,125 @@ class SupplierController extends Controller
             }
         }
     }
+
+    public function import()
+    {
+        return view('supplier.import');
+    }
+
+    public function import_ajax(Request $request)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            $rules = [
+                'file_supplier' => ['required', 'mimes:xlsx', 'max:1024']
+            ];
+    
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Validasi Gagal',
+                    'msgField' => $validator->errors()
+                ]);
+            }
+    
+            $file = $request->file('file_supplier'); 
+    
+            $reader = IOFactory::createReader('Xlsx');
+            $reader->setReadDataOnly(true);
+            $spreadsheet = $reader->load($file->getRealPath());
+            $sheet = $spreadsheet->getActiveSheet();
+            $data = $sheet->toArray(null, false, true, true);
+    
+            $insert = [];
+            if (count($data) > 1) { 
+                foreach ($data as $baris => $value) {
+                    if ($baris > 1) { 
+                        $insert[] = [
+                            'supplier_kode' => $value['A'],
+                            'supplier_nama' => $value['B'],
+                            'created_at' => now(),
+                        ];
+                    }
+                }
+    
+                if (count($insert) > 0) {
+                    SupplierModel::insertOrIgnore($insert);
+                }
+    
+                return response()->json([
+                    'status'  => true,
+                    'message' => 'Data level berhasil diimport'
+                ]);
+            } else {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Tidak ada data yang diimport'
+                ]);
+            }
+        }
+        return redirect('/');
+    }
+
+    public function export_excel()
+    {
+        $supplier = SupplierModel::select('supplier_kode', 'supplier_nama')
+                                 ->orderBy('supplier_kode')
+                                 ->get();
+        
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet(); 
+    
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Kode supplier');
+        $sheet->setCellValue('C1', 'Nama supplier');
+    
+        $sheet->getStyle('A1:C1')->getFont()->setBold(true); 
+    
+        $no = 1; 
+        $baris = 2; 
+        foreach ($supplier as $key => $value) {
+            $sheet->setCellValue('A'.$baris, $no);
+            $sheet->setCellValue('B'.$baris, $value->supplier_kode);
+            $sheet->setCellValue('C'.$baris, $value->supplier_nama);
+            $baris++;
+            $no++;
+        }
+        
+        foreach (range('A', 'C') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);          
+        }
+    
+        $sheet->setTitle('Data supplier'); 
+    
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $filename = 'Data supplier '.date('Y-m-d H:i:s').'.xlsx';
+        
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="'.$filename.'"');
+        header('Cache-Control: max-age=0');
+        header('Cache-Control: max-age=1');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        header('Cache-Control: cache, must-revalidate');
+        header('Pragma: public');
+        
+        $writer->save('php://output');
+        exit;    
+    }
+
+    public function export_pdf(){
+        $supplier = SupplierModel::select('supplier_id', 'supplier_kode', 'supplier_nama')
+                    ->orderBy('supplier_id')
+                    ->get();
+
+        $pdf = Pdf::loadView('supplier.export_pdf', ['supplier' => $supplier]);
+        $pdf->setPaper('a4','portrait');
+        $pdf->setOption("isRemoteEnable", true);
+        $pdf->render();
+
+        return $pdf->stream('Data Supplier'.date('Y-m-d H:i:s').'.pdf');
+    }
+
+    
 }
