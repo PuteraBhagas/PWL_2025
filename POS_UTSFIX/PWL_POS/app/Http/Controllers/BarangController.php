@@ -40,7 +40,8 @@ class BarangController extends Controller
             'barang_nama',
             'harga_beli',
             'harga_jual',
-            'kategori_id'
+            'kategori_id',
+            'stok'
         )->with('kategori');
 
         $kategori_id = $request->input('filter_kategori');

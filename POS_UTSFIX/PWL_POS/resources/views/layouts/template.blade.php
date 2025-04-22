@@ -22,6 +22,62 @@
   <link rel="stylesheet" href="{{ asset('adminlte/dist/css/adminlte.min.css') }}">
 
   @stack('css') <!-- Digunakan untuk memanggil custom css dari perintah push('css') pada masing masing view-->
+
+
+  <style>
+    .sidebar {
+        background: linear-gradient(145deg, #343a40, #1d2124);
+        color: #ffffff;
+        border-top-right-radius: 15px;
+        border-bottom-right-radius: 15px;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .sidebar .nav-link {
+        color: #cfd8dc;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        margin-bottom: 5px;
+    }
+    
+    .sidebar .nav-link:hover {
+        background-color: #495057;
+        color: #ffffff;
+    }
+    
+    .sidebar .nav-link.active {
+        background-color: #007bff;
+        color: #ffffff;
+        font-weight: bold;
+        box-shadow: 0 0 10px rgba(0, 123, 255, 0.4);
+    }
+    
+    .sidebar .nav-icon {
+        margin-right: 8px;
+    }
+    
+    .sidebar .nav-header {
+        color: #b0bec5;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        margin: 15px 0 5px 15px;
+    }
+    
+    .form-inline .form-control-sidebar {
+        background-color: #495057;
+        color: #ffffff;
+        border: none;
+        border-radius: 10px 0 0 10px;
+    }
+    
+    .btn-sidebar {
+        background-color: #6c757d;
+        border: none;
+        color: #ffffff;
+        border-radius: 0 10px 10px 0;
+    }
+    </style>
+    
 </head>
 <body class="hold-transition sidebar-mini">
 <!-- Site wrapper -->

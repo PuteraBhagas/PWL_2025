@@ -48,6 +48,7 @@
                     <th>Harga Beli</th>
                     <th>Harga Jual</th>
                     <th>Kategori</th>
+                    <th>Stok</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -135,7 +136,14 @@
                     width: "14%",
                     orderable: false,
                     searchable: false
-                }
+                },
+                {
+                        data: "stok",
+                        className: "",
+                        width: "8%",
+                        orderable: true,
+                        searchable: false
+                    }
             ]
         });
 
