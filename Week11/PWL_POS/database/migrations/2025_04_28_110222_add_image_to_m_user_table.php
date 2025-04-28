@@ -10,13 +10,11 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-    Schema::table('m_user', function (Blueprint $table) {
-        if (!Schema::hasColumn('m_user', 'photo_profile')) {
-            $table->string('photo_profile')->nullable();
-        }
-    });
-}
+    {
+        Schema::table('m_user', function (Blueprint $table) {
+            $table->string('image');
+        });
+    }
 
     /**
      * Reverse the migrations.
@@ -24,7 +22,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('m_user', function (Blueprint $table) {
-            $table->dropColumn('photo_profile');
+           $table->dropColumn('image');
+
         });
     }
 };
