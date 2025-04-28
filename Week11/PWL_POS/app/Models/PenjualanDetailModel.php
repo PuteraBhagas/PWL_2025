@@ -4,25 +4,36 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PenjualanDetailModel extends Model
 {
     use HasFactory;
-
     protected $table = 't_penjualan_detail';
     protected $primaryKey = 'detail_id';
-    protected $guarded = [];
+    public $timestamps = false;
 
+    protected $fillable = [
+        'penjualan_id',
+        'barang_id',
+        'harga',
+        'jumlah',
+    ];
 
-    public function penjualan(): BelongsTo
+    // Relasi ke transaksi
+    public function penjualan()
     {
-        return $this->belongsTo(PenjualanModel::class, 'penjualan_id', 'penjualan_id');
+        return $this->belongsTo(PenjualanModel::class, 'penjualan_id');
     }
 
-    public function barang(): BelongsTo
+    // Relasi ke barang
+    public function barang()
     {
-        return $this->belongsTo(BarangModel::class, 'barang_id', 'barang_id');
+        return $this->belongsTo(BarangModel::class, 'barang_id');
+    }
+
+    public function stok()
+    {
+        return $this->hasOne(StokModel::class, 'barang_id', 'barang_id');
     }
 
 }
